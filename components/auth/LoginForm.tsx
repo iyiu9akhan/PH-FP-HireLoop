@@ -20,12 +20,22 @@ const loginSchema = z.object({
 
 type LoginValues = z.infer<typeof loginSchema>
 
+export type LoginPayload = {
+  email: string
+  password: string
+  remember: boolean
+}
+
+type LoginFormProps = {
+  onSubmit: (data: LoginPayload) => Promise<void>
+}
+
 const input =
   "h-12 w-full rounded-[12px] border border-white/10 bg-[#0f0f0f] px-4 font-satoshi text-base text-white outline-none placeholder:text-white/40 focus:border-brand-purple focus:ring-2 focus:ring-brand-purple/30 aria-invalid:border-red-500/70"
 const label = "font-manrope text-sm font-medium text-white"
 const error = "text-sm text-red-400"
 
-const LoginForm = () => {
+const LoginForm = ({ onSubmit }: LoginFormProps) => {
   const [show, setShow] = useState(false)
   const {
     register,
@@ -37,8 +47,15 @@ const LoginForm = () => {
     mode: "onTouched",
   })
 
-  const onSubmit = (values: LoginValues) => {
-    console.log("Login data:", values)
+  const submit = async (values: LoginValues) => {
+    const payload: LoginPayload = {
+      email: values.email,
+      password: values.password,
+      remember: values.remember,
+    }
+
+    console.log("Login data:", payload)
+    await onSubmit(payload)
   }
 
   return (
@@ -67,7 +84,7 @@ const LoginForm = () => {
         <span className="h-px flex-1 bg-white/10" />
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-5">
+      <form onSubmit={handleSubmit(submit)} noValidate className="flex flex-col gap-5">
         <div className="flex flex-col gap-2">
           <label htmlFor="email" className={label}>Email</label>
           <input

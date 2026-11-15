@@ -35,6 +35,18 @@ const signupSchema = z
 
 type SignupValues = z.infer<typeof signupSchema>
 
+export type SignupPayload = {
+  fullName: string
+  email: string
+  password: string
+  role: "job_seeker" | "recruiter"
+  companyName?: string
+}
+
+type SignupFormProps = {
+  onSubmit: (data: SignupPayload) => Promise<void>
+}
+
 const roles = [
   { value: "job_seeker", label: "Job Seeker", desc: "Find and apply to jobs", icon: UserSearch },
   { value: "recruiter", label: "Recruiter", desc: "Post jobs and hire talent", icon: Building2 },
@@ -45,7 +57,7 @@ const input =
 const label = "font-manrope text-sm font-medium text-white"
 const error = "text-sm text-red-400"
 
-const SignupForm = () => {
+const SignupForm = ({ onSubmit }: SignupFormProps) => {
   const [showPass, setShowPass] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
 
@@ -71,14 +83,17 @@ const SignupForm = () => {
 
   const role = watch("role")
 
-  const onSubmit = (v: SignupValues) => {
-    console.log("Signup data:", {
+  const submit = async (v: SignupValues) => {
+    const payload: SignupPayload = {
       fullName: v.fullName,
       email: v.email,
-      role: v.role,
       password: v.password,
+      role: v.role,
       ...(v.role === "recruiter" && { companyName: v.companyName }),
-    })
+    }
+
+    console.log("Signup data:", payload)
+    await onSubmit(payload)
   }
 
   return (
@@ -92,8 +107,7 @@ const SignupForm = () => {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-5">
-        {/* Role */}
+      <form onSubmit={handleSubmit(submit)} noValidate className="flex flex-col gap-5">
         <fieldset className="flex flex-col gap-2">
           <legend className={`${label} mb-2`}>I am a</legend>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -170,7 +184,6 @@ const SignupForm = () => {
           At least 8 characters with uppercase, lowercase and a number.
         </p>
 
-        {/* Terms */}
         <div className="flex flex-col gap-2">
           <label className="flex cursor-pointer items-start gap-3 font-manrope text-sm text-white/70">
             <input type="checkbox" className="mt-0.5 size-4 accent-brand-purple" {...register("terms")} />
