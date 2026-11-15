@@ -10,7 +10,7 @@ const stats = [
 
 const Stats = () => {
   return (
-    <section className="mt-89.5 text-center">
+    <section className="mt-89.5 mb-18 text-center">
       <h1 className="mx-auto mb-12 max-w-150 font-manrope text-[40px] leading-[130%] tracking-[-1px] text-white/70">
         Assisting over <span className="text-white">15,000 job seekers</span>{" "}
         find their dream positions.
